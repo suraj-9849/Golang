@@ -21,56 +21,54 @@ func task(done chan bool) {
 	fmt.Println("Processing...")
 }
 
-func emailSender(emailChan <-chan string, done chan<- bool){
-		defer func() {
+func emailSender(emailChan <-chan string, done chan<- bool) {
+	defer func() {
 		done <- true
 	}()
-	// emailChan<-"Hello@example.com" -> this is invalid 
-	for email:=range emailChan{
+	// emailChan<-"Hello@example.com" -> this is invalid
+	for email := range emailChan {
 		fmt.Println("Sending email to: ", email)
 	}
 }
 
 func main() {
 
-	chan1:=make(chan int)
-	chan2:=make(chan string)
+	chan1 := make(chan int)
+	chan2 := make(chan string)
 
-
-	go func(){
-		chan1<-10
+	go func() {
+		chan1 <- 10
 	}()
 
-	go func(){
-		chan2<-"Golang"
+	go func() {
+		chan2 <- "Golang"
 	}()
 
-	for i:=0;i<2;i++{
-		select{
-		case chan1Val:=<-chan1:
+	for i := 0; i < 2; i++ {
+		select {
+		case chan1Val := <-chan1:
 			fmt.Println("Recieved data from chan1:", chan1Val)
-		case chan2Val:=<-chan2:
+		case chan2Val := <-chan2:
 			fmt.Println("Recieved data from chan1:", chan2Val)
 		}
 	}
 
+	// 	//Buffered Channels Example:
+	// // this will be non blocking until the limit given: in this example we see 100
+	// 	emailChan := make(chan string, 100)
+	// 	done := make(chan bool)
 
-// 	//Buffered Channels Example:
-// // this will be non blocking until the limit given: in this example we see 100
-// 	emailChan := make(chan string, 100)
-// 	done := make(chan bool)
+	// 	go emailSender(emailChan, done)
 
-// 	go emailSender(emailChan, done)
+	// 	for i := 0; i < 5; i++ {
+	// 		emailChan <- fmt.Sprintf("%d@example.com", i)
+	// 		time.Sleep(time.Second)
+	// 	}
+	// 	close(emailChan)
 
-// 	for i := 0; i < 5; i++ {
-// 		emailChan <- fmt.Sprintf("%d@example.com", i)
-// 		time.Sleep(time.Second)
-// 	}
-// 	close(emailChan)
+	// 	fmt.Println("Done Sending.. ")
 
-// 	fmt.Println("Done Sending.. ")
-
-// 	<-done
+	// 	<-done
 
 	// // Unbuffered Channels Example
 
